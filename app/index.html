@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+  	<!-- Meta Definition -->
+  	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>MathBirthday.com</title>
+
+  	<!-- Bootstrap loading-->
+  	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"> </script>
+
+  </head>
+
+  <body>
+  	
+  	<!--Basic Navbar-->
+  	<nav class="navbar navbar-default">
+	  	<div class="container-fluid">
+	    	<div class="navbar-header">
+	      		<a class="navbar-brand" href="#">MathBirthday.com</a>
+	    	</div>
+	    </div>
+	</nav>
+
+  <!-- Jumbotron -->
+
+  <div class="container">
+   	<div class="jumbotron">
+		<h1>Hi! Wanna know your next MathBirthday?!</h1>
+		<p>When were you born?</p>
+		<p><input id="birthdate" type="date" name="bday"></p>
+    	<p><a  id="click_me" class="btn btn-primary btn-lg" href="#" role="button">Calculate!</a></p>
+	</div>
+  </div>
+  
+
+
+
+<script type="text/javascript">
+   document.getElementById('click_me').onclick = function () { 
+   		// I need to fix the GMT error when creating the date 
+   		var bdate = new Date(document.getElementById("birthdate").value);
+   		var today = new Date();
+   		alert(bdate.value);
+   		console.log(today);
+   		console.log(bdate);
+
+   		//difference in days
+   		var days = today - bdate;
+   		console.log(days);
+   };
+
+</script>
+
+
+</body>
+
+</html>
