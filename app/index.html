@@ -18,12 +18,12 @@
   </head>
 
   <body>
-  	
+
   	<!--Basic Navbar-->
   	<nav class="navbar navbar-default">
 	  	<div class="container-fluid">
 	    	<div class="navbar-header">
-	      		<a class="navbar-brand" href="#">MathBirthday.com</a>
+	      		<a class="navbar-brand">MathBirthday.com</a>
 	    	</div>
 	    </div>
 	</nav>
@@ -34,27 +34,163 @@
    	<div class="jumbotron">
 		<h1>Hi! Wanna know your next MathBirthday?!</h1>
 		<p>When were you born?</p>
-		<p><input id="birthdate" type="date" name="bday"></p>
-    	<p><a  id="click_me" class="btn btn-primary btn-lg" href="#" role="button">Calculate!</a></p>
-	</div>
+
+
+
+    <p><input id="birthdate" type="date" name="bday"></p>
+    <p><a  id="click_me" class="btn btn-primary btn-lg" role="button">Tell me my MathBirthday!</a></p>
+
+    <div id='alertmessage' class="alert alert-success hidden" role="alert"></div>
+
   </div>
-  
+  </div>
+
 
 
 
 <script type="text/javascript">
-   document.getElementById('click_me').onclick = function () { 
-   		// I need to fix the GMT error when creating the date 
-   		var bdate = new Date(document.getElementById("birthdate").value);
-   		var today = new Date();
-   		alert(bdate.value);
-   		console.log(today);
-   		console.log(bdate);
+/**
+* On DOM loaded:
+*   - assign methods to button / input events.
+*   - set Default values.
+*   - Message must say "Your next math birthday is your 10^n-day-old birthday on X date".
+*/
+    document.addEventListener("DOMContentLoaded", function() {
+        var alertMessage = document.getElementById("alertmessage");
+        var datePicker = document.getElementById('birthdate');
+        //On click calculates the next mathbirthday.
+        document.getElementById('click_me').onclick = function () {
+            var dateborn = new Date(datePicker.value);
+            var mbday = calculateNextMathbirthday(dateborn);
+            var message = 'Your next math birthday is your '+
+                          Math.pow(10, mbday.power) +
+                          '-day-old birthday on ' +
+                          formatDate(mbday.mbday) +
+                          '.';
 
-   		//difference in days
-   		var days = today - bdate;
-   		console.log(days);
+
+            alertmessage.classList.remove('hidden');
+            alertMessage.innerHTML = message;
+
+            console.log(dateValidation(dateborn));
+        };
+
+        //default value for datepicker.
+        datePicker.valueAsDate = new Date();
+        datePicker.onchange = function(){
+            alertMessage.classList.add('hidden');
+            // Future dates not allowed.
+            if  (!dateValidation(datePicker.value) ){
+                datePicker.valueAsDate = new Date();
+            };
+
+        };
+
+
+
+    });
+
+/**
+*   check if the date selected is not in the future.
+*
+*   @param {Date} selectedDate type Date.
+*   @return {boolean}, true if valid date.
+*/
+   function dateValidation(selectedDate){
+      var today = new Date();
+      var date = new Date(selectedDate);
+      if (date > today){
+          return false;
+      }
+      return true;
    };
+
+/**
+*   calculates the next math birthday for the specified birth date.
+*   Mathbirthdays happen when people are 10^n days old.
+*
+*
+*   @param {Date} birthdate.
+*   @return {Number} result.power, power of 10th of the next mathbirthday.
+*   @return {Date}  result.mbday, date of the upcoming mathbirthday.
+*/
+   function calculateNextMathbirthday(birthdate){
+
+      var today = new Date();
+
+      //difference in days.
+      var diff = differenceOfDatesInDays(today,birthdate);
+
+      //the lenght of the # of days determines the next MathBirthday.
+      var mbexpn = calculatePow(diff);
+
+      // we get next mathbirthday  by adding 10^(mb_n+1) to the birthday.
+      var nextMBday = addDaysToDate( Math.pow(10, mbexpn), birthdate);
+
+      //now we return the result in an object.
+      return {
+        power: mbexpn,
+        mbday: nextMBday
+      };
+   };
+/**
+*   calculates the difference of 2 dates in days.
+*
+*   @param  {date} futureDate, most recent date.
+*   @param  {date} pastDate, date previous of futuredate.
+*   @result {}
+*/
+  function differenceOfDatesInDays(futureDate, pastDate){
+      return parseInt((futureDate - pastDate)/(24*3600*1000));
+  };
+
+
+/**
+*   Finds the next power (n) of the upcoming math birthday.
+*
+*   @param {Number} daysOld,  the number of days someone is today.
+*   @return {Number} power, the power of the next mathbirthday.
+*/
+   function calculatePow(daysOld){
+        //the lenght of the # of days determines the next MathBirthday.
+        var power = daysOld.toString().length;
+        console.log('n : ' +  power);
+        return power;
+    };
+
+/**
+*   this function adds days to a specific date.
+*
+*   @param {Number} days, days to add.
+*   @param {Date} baseDate, date from which the days will be added.
+*   @return {Date} newDate, resulting date.
+*/
+    function addDaysToDate(days, baseDate){
+        //
+        var newDate = new Date(baseDate);
+        newDate.setDate( newDate.getDate() + days);
+        console.log( 'Next MathBirthday = ' + newDate);
+        return newDate;
+    }
+
+/**
+*   date format YYYY-MM-DD
+*
+*   @param {Date}, date to be formatted
+*   @result {String}, date formatted
+*/
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 
 </script>
 
