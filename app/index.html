@@ -17,21 +17,9 @@
 	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"> </script>
 
     <style>
-      .top-buffer {
-        margin-top: 20px;
-      }
 
       .bottom-buffer{
         padding-bottom: 20px;
-      }
-
-      .black-background{
-        background-color: black;
-      }
-
-      .no-right-margin{
-        padding-right: 0px;
-        margin-right: 0px;
       }
 
       .no-padding-left{
@@ -41,6 +29,7 @@
       .no-padding-right{
         padding-right: 0px;
       }
+
       .scrollable-menu {
         height: auto;
         max-height: 200px;
@@ -137,36 +126,6 @@
 *   - Message must say "Your next math birthday is your 10^n-day-old birthday on X date".
 */
 
-    monthsArray = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    var months = {
-      January: 0,
-      February: 1,
-      March: 2,
-      April: 3,
-      May: 4,
-      June: 5,
-      July: 6,
-      August: 7,
-      September: 8,
-      October: 9,
-      November: 10,
-      December : 11,
-  };
-
 
     document.addEventListener("DOMContentLoaded", function() {
         var alertMessage = document.getElementById("alertmessage");
@@ -176,51 +135,24 @@
         var inputMonth = document.getElementById('month-input');
         var dropdownYear = document.getElementById('year-dropdown');
         var dropdownMonth = document.getElementById('month-dropdown');
-        var datePickerWidget = new DatePickerWidget(inputYear,inputMonth,datePicker,datepickerWidget,dropdownYear,dropdownMonth);
+        var widget = new DatePickerWidget(inputYear,inputMonth,datePicker,datepickerWidget,dropdownYear,dropdownMonth);
 
-        //default value for datepicker.
-        var today = new Date();
-        datePicker.valueAsDate = today;
-        inputYear.value = today.getFullYear();
-        inputMonth.value = monthsArray[today.getMonth()];
 
         //validation
         datePicker.onchange = function(){
             alertMessage.classList.add('hidden');
             // Future dates not allowed.
             if  (!dateValidation(datePicker.value) ){
-                datePicker.valueAsDate = today;
-                inputYear.value = today.getFullYear();
-                inputMonth.value = monthArray[today.getMonth()];
+                datePicker.valueAsDate = widget.today;
+                inputYear.value = widget.today.getFullYear();
+                inputMonth.value = widget.monthsArray[widget.today.getMonth()];
             };
         };
 
 
 
-        datepickerWidget.innerHTML = '';
-        //printMonthDays(datepickerWidget,inputMonth.value,inputYear.value,months);
-        datePickerWidget.printMonthDays();
-        addYearsToDropdown(document.getElementById('year-dropdown'), inputYear);
-        addMonthsToDropdown(document.getElementById('month-dropdown'),monthsArray);
-        addFnYearsToDropdown(inputYear);
-        addFnMonthsToDropdown(inputMonth,monthsArray);
-        dateCallbackAssignment(inputMonth,inputYear,datePicker,months);
-
-        inputYear.onchange = function(){
-          datepickerWidget.innerHTML = '';
-          printMonthDays(datepickerWidget,inputMonth.value,inputYear.value,months);
-          dateCallbackAssignment(inputMonth,inputYear,datePicker,months);
-        };
-
-        inputMonth.onchange = function(){
-          datepickerWidget.innerHTML = '';
-          printMonthDays(datepickerWidget,inputMonth.value,inputYear.value,months);
-          dateCallbackAssignment(inputMonth,inputYear,datePicker,months);
-        };
-
         //On click calculates the next mathbirthday.
         document.getElementById('calculate-button').onclick = function () {
-            console.log('calculate');
             var dateborn = new Date(datePicker.value);
             var mbday = calculateNextMathbirthday(dateborn);
             var message = 'You were born on ' + datePicker.value +'. '
@@ -301,7 +233,6 @@
    function calculatePow(daysOld){
         //the lenght of the # of days determines the next MathBirthday.
         var power = daysOld.toString().length;
-        console.log('n : ' +  power);
         return power;
     };
 
@@ -401,10 +332,11 @@ function DatePickerWidget(DOMInputYear,DOMInputMonth, DOMInputDatepicker,DOMWidg
 *   @result {String}, date of the button.
 */
   this.printMonthDays =  function(){
-
+    this.DOMWidgetDatepicker.innerHTML = ''
     for (var i = 1; i <= this.getFinalDayOfMonth(this.DOMInputYear.value,this.DOMInputMonth.value); i++) {
       this.printDateButton(i);
     }
+    this.dateCallbackAssignment();
   };
 
 /**
@@ -422,92 +354,19 @@ function DatePickerWidget(DOMInputYear,DOMInputMonth, DOMInputDatepicker,DOMWidg
   };
 
 
-
-
-
-
-};
-
-
-
-
-
-
-/**
-*   prints a button with a date in inner HTML of DOM Element
-*
-*   @param {DOMelement}, DOM element
-*   @result {String}, date of the button.
-*/
-function printDateButton(DOMElement, calendarDate){
-  var text1 = '<button class="btn btn-default col-lg-1 col-md-1 col-sm-2 hidden-xs text-center" type="button"';
-  var text2 = '><span aria-hidden="true">';
-  var text3 = '</span></button>';
-
-  DOMElement.innerHTML += text1 + 'id="date-' + calendarDate + '" ' + text2 + calendarDate + text3;
-
-}
-
 /**
 *   prints a month in inner HTML of DOM Element
 *
 *   @param {DOMelement}, DOM element
 *   @result {String}, date of the button.
 */
-function printMonthDays(DOMElement, month, year,monthsObject){
-
-
-  for (var i = 1; i <= getFinalDayOfMonth(year,month,monthsObject); i++) {
-    printDateButton(DOMElement, i);
-  }
-
-};
-
-/**
-*   gets the final day of the month
-*
-*   @param {number} year,
-*   @param {String} Month,
-*   @result {number}, last day of the month.
-*/
-function getFinalDayOfMonth(year, month,monthsObject){
-
-
-  var printMonth = new Date(year,monthsObject[month],1);
-
-  printMonth.setMonth(printMonth.getMonth() + 1);
-  printMonth.setDate(printMonth.getDate() - 1);
-  return printMonth.getDate();
-}
-
-
-/**
-*   prints a month in inner HTML of DOM Element
-*
-*   @param {DOMelement}, DOM element
-*   @result {String}, date of the button.
-*/
-function dateCallbackAssignment(DOMmonth,DOMyear,DOMdatepicker,monthsObject){
-  var id = '';
-  for (var i = 1; i <= getFinalDayOfMonth(DOMyear.value,DOMmonth.value,monthsObject); i++) {
-    id = 'date-' + i;
-    document.getElementById(id).onclick = addClosureForOnclickDate(DOMdatepicker,DOMyear,DOMmonth,i,monthsObject);
-  }
-}
-
-
-/**
-*   Sets Closure for onclick functions for year/month dropdown items
-*
-*   @param {Objet} DOM, DOM element.
-*   @param {String}, value.
-*/
-function addClosureForOnclickMonthOrYear(DOM,value){
-  return function closureForOnclickMonthOrYear(){
-      DOM.value = value;
-      DOM.onchange();
+  this.dateCallbackAssignment = function (){
+    var id = '';
+    for (var i = 1; i <= this.getFinalDayOfMonth(this.DOMInputYear.value, this.DOMInputMonth.value); i++) {
+      id = 'date-' + i;
+      document.getElementById(id).onclick = this.addClosureForOnclickDate(i,this);
     }
-};
+  };
 
 /**
 *   Sets Closure for onclick functions where value must be changed
@@ -516,90 +375,173 @@ function addClosureForOnclickMonthOrYear(DOM,value){
 *   @param {object} DOMMonth, *DOM element input for month.
 *   @param {number} date, number thar represents a calendar date (ex. 22).
 */
-function addClosureForOnclickDate(DOMdatepicker,DOMYear,DOMMonth,date,monthsObject){
+  this.addClosureForOnclickDate = function (date,that){
 
-  return function closureForOnclickDate(){
+    return function closureForOnclickDate(){
 
-      var element = document.querySelector('.btn-success');
-      console.log(element);
+        var element = document.querySelector('.btn-success');
 
-      if (element !== null){
-        element.classList.remove('btn-success');
+        if (element !== null){
+          element.classList.remove('btn-success');
+        }
+
+        nextDate = new Date(that.DOMInputYear.value, that.months[that.DOMInputMonth.value], date);
+
+
+        if(nextDate <= new Date()){
+          that.DOMInputDatePicker.valueAsDate = nextDate;
+          this.classList.add('btn-success');
+          that.cursor = date;
+        }
+        else{
+            var id = 'date-' + that.cursor;
+            document.getElementById(id).classList.add('btn-success');
+        }
+
+        that.DOMInputDatePicker.onchange();
       }
+  };
 
-      nextDate = new Date(DOMYear.value, monthsObject[DOMMonth.value], date);
-      DOMdatepicker.valueAsDate = nextDate;
-
-      if(nextDate <= new Date()){
-        this.classList.add('btn-success');
+/**
+*   Sets Closure for onclick functions for year/month dropdown items
+*
+*   @param {Objet} DOM, DOM element.
+*   @param {String}, value.
+*/
+  this.addClosureForOnclickMonthOrYear = function (DOM,value){
+    return function closureForOnclickMonthOrYear(){
+        DOM.value = value;
+        DOM.onchange();
       }
+  };
 
-      DOMdatepicker.onchange();
-    }
-};
 
 /**
 *   sets years in dropdown list
 *
 *   @param {DOMelement}, DOM UL element.
 */
-function addYearsToDropdown(DOMElement,inputDOMElement){
-  var date = new Date();
-  var text1 = '<li><a id="year-';
-  var text2 = '">';
-  var text3 = '</a></li>';
-  var id = '';
+  this.addYearsToDropdown = function (){
+    var date = new Date();
+    var text1 = '<li><a id="year-';
+    var text2 = '">';
+    var text3 = '</a></li>';
+    var id = '';
 
+    for (var i = 1900; i <= date.getFullYear(); i++) {
+      this.DOMDropdownYear.innerHTML += text1 + i + text2 + i + text3;
+    };
 
-
-  for (var i = 1900; i <= date.getFullYear(); i++) {
-    DOMElement.innerHTML += text1 + i + text2 + i + text3;
   };
-
-};
 
 /**
 *   sets callback functions to years in dropdown list to update input field
 *
 *   @param {DOMelement}, DOM UL element.
 */
-function addFnYearsToDropdown(inputDOMElement){
-  var date = new Date();
-  var id = '';
+  this.addFnYearsToDropdown = function(inputDOMElement){
+    var date = new Date();
+    var id = '';
 
-  for (var i = 1900; i <= date.getFullYear(); i++) {
-    id = 'year-' + i;
-    document.getElementById(id).onclick = addClosureForOnclickMonthOrYear(inputDOMElement,i);
+    for (var i = 1900; i <= date.getFullYear(); i++) {
+      id = 'year-' + i;
+      document.getElementById(id).onclick = this.addClosureForOnclickMonthOrYear(this.DOMInputYear,i);
+    };
+
   };
-
-};
 
 /**
 *   sets months in dropdown list
 *
 *   @param {DOMelement}, DOM UL element.
 */
-function addMonthsToDropdown(DOMElement,array){
-  var text1 = '<li><a id="month-';
-  var text2 = '">';
-  var text3 = '</a></li>';
-  for(month in array){
-    DOMElement.innerHTML += text1 + array[month] + text2  + array[month] + text3 ;
+  this.addMonthsToDropdown = function(){
+    var text1 = '<li><a id="month-';
+    var text2 = '">';
+    var text3 = '</a></li>';
+    for(month in this.monthsArray){
+      this.DOMDropdownMonth.innerHTML += text1 + this.monthsArray[month] + text2  + this.monthsArray[month] + text3 ;
+    };
   };
-}
 
 /**
 *   adds callback function to all months
 *
 *   @param {DOMelement}, DOM UL element.
 */
-function addFnMonthsToDropdown(inputDOMElement, array){
-  var id = '';
-  for(month in array){
-    id = 'month-' + array[month];
-    document.getElementById(id).onclick = addClosureForOnclickMonthOrYear(inputDOMElement,array[month]);
-  };
-}
+  this.addFnMonthsToDropdown = function(inputDOMElement, array){
+    var id = '';
+    for(month in this.monthsArray){
+      id = 'month-' + this.monthsArray[month];
+      document.getElementById(id).onclick = this.addClosureForOnclickMonthOrYear(this.DOMInputMonth,this.monthsArray[month]);
+    };
+  }
+
+
+  //initialization
+  var today = new Date();
+  today.setTime(today.getTime() - new Date().getTimezoneOffset()*60*1000);
+  this.today = today;
+  this.DOMInputDatePicker.valueAsDate = this.today;
+  this.DOMInputYear.value = today.getFullYear();
+  this.DOMInputMonth.value = this.monthsArray[today.getMonth()];
+  this.cursor = today.getDate();
+
+  this.printMonthDays();
+  this.addYearsToDropdown();
+  this.addFnYearsToDropdown();
+  this.addMonthsToDropdown();
+  this.addFnMonthsToDropdown();
+
+  this.DOMInputYear.onchange = function(){
+    if(this.DOMInputYear.value >= this.today.getFullYear() && this.months[this.DOMInputMonth.value] > this.today.getMonth()) {
+      this.DOMInputMonth.value = this.monthsArray[this.today.getMonth()];
+      if(this.cursor > this.today.getDate()){
+        this.cursor = this.today.getDate();
+      };
+    }
+
+    this.printMonthDays();
+    var finalDay = this.getFinalDayOfMonth(this.DOMInputYear.value, this.DOMInputMonth.value);
+    if(this.cursor > finalDay){
+      this.cursor = finalDay;
+    };
+    this.DOMInputDatePicker.valueAsDate = new Date(this.DOMInputYear.value, this.months[this.DOMInputMonth.value], this.cursor);
+    var id = 'date-' + this.cursor;
+    document.getElementById(id).classList.add('btn-success');}.bind(this);
+
+
+  this.DOMInputMonth.onchange = function(){
+
+    if(this.DOMInputYear.value >= this.today.getFullYear() && this.months[this.DOMInputMonth.value] > this.today.getMonth()) {
+      this.DOMInputMonth.value = this.monthsArray[this.today.getMonth()];
+      if(this.cursor > this.today.getDate()){
+        this.cursor = this.today.getDate();
+      };
+    }
+      this.printMonthDays();
+      var finalDay = this.getFinalDayOfMonth(this.DOMInputYear.value, this.DOMInputMonth.value);
+      if(this.cursor > finalDay){
+        this.cursor = finalDay;
+      };
+
+
+      this.DOMInputDatePicker.valueAsDate = new Date(this.DOMInputYear.value, this.months[this.DOMInputMonth.value], this.cursor);
+      var id = 'date-' + this.cursor;
+      document.getElementById(id).classList.add('btn-success');
+
+
+  }.bind(this);
+
+  //cursor marking
+  var id = 'date-' + this.cursor;
+  document.getElementById(id).classList.add('btn-success');
+
+};
+
+
+
+
 
 
 </script>

@@ -389,7 +389,7 @@ function dateCallbackAssignment(DOMmonth,DOMyear,DOMdatepicker,monthsObject){
   var id = '';
   for (var i = 1; i <= getFinalDayOfMonth(DOMyear.value,DOMmonth.value,monthsObject); i++) {
     id = 'date-' + i;
-    document.getElementById(id).onclick = addClosureForOnclickDate(DOMdatepicker,i,monthsObject);
+    document.getElementById(id).onclick = addClosureForOnclickDate(DOMdatepicker,DOMyear,DOMmonth,i,monthsObject);
   }
 }
 
@@ -414,15 +414,15 @@ function addClosureForOnclickMonthOrYear(DOM,value){
 *   @param {object} DOMMonth, *DOM element input for month.
 *   @param {number} date, number thar represents a calendar date (ex. 22).
 */
-function addClosureForOnclickDate(DOMdatepicker,date,monthsObject){
+function addClosureForOnclickDate(DOMdatepicker,DOMYear,DOMMonth,date,monthsObject){
 
   return function closureForOnclickDate(){
 
       var element = document.querySelector('.btn-success');
       console.log(element);
 
-      if (elements !== null){
-        elements.classList.remove('btn-success');
+      if (element !== null){
+        element.classList.remove('btn-success');
       }
 
       nextDate = new Date(DOMYear.value, monthsObject[DOMMonth.value], date);
