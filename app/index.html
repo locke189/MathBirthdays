@@ -1,22 +1,26 @@
 <!DOCTYPE HTML>
 <html lang="en">
   <head>
-  	<!-- Meta Definition -->
-  	<meta charset="utf-8">
+    <!-- Meta Definition -->
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>MathBirthday.com</title>
 
-  	<!-- Bootstrap loading-->
-  	<!-- Latest compiled and minified CSS -->
-	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- Bootstrap loading-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
-	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"> </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"> </script>
 
     <style>
+
+      .top-buffer{
+        margin-top:   20px;
+      }
 
       .bottom-buffer{
         padding-bottom: 20px;
@@ -43,78 +47,91 @@
 
   <body>
 
-  	<!--Basic Navbar-->
-  	<nav class="navbar navbar-default">
-	  	<div class="container-fluid">
-	    	<div class="navbar-header">
-	      		<a class="navbar-brand">MathBirthday.com</a>
-	    	</div>
-	    </div>
-	</nav>
+    <!--Basic Navbar-->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand">MathBirthday.com</a>
+        </div>
+      </div>
+    </nav>
 
   <!-- Jumbotron -->
 
-<div class="container">
-  <div class="jumbotron">
-    <h1 class='visible-lg'>Hello! Wanna know your next MathBirthday?</h1>
-    <h2 class='visible-md visible-xs visible-sm'>Hello! Wanna know your next MathBirthday?</h1>
-		<p>When were you born?</p>
+    <div class="container">
+      <div class="jumbotron">
+        <h1 class='visible-lg'>Hello! Wanna know your next MathBirthday?</h1>
+        <h2 class='visible-md visible-xs visible-sm'>Hello! Wanna know your next MathBirthday?</h1>
+        <p>When were you born?</p>
 
-    <!--Datepicker widget-->
-    <div id='widget' class='container hidden-xs'>
-      <!--Year Selection Box-->
-      <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-4 no-padding-left no-padding-right">
-          <div class="input-group">
-            <input type="number" id='year-input' class="form-control text-center dropdown-toggle"  min='1900' max='2016' aria-label="..." value='2012'>
-            <span class="input-group-btn dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <a class="caret"></a>
-              </button>
-                <ul id='year-dropdown' class="dropdown-menu scrollable-menu" role='menu' aria-labelledby="dropdownMenu1">
-                </ul>
-            </span>
+        <!--Datepicker widget-->
+        <div id='widget'>
+          <!--Year Selection Box-->
+          <form>
+          <div class='container hidden-xs'>
+            <div class="row">
+              <div class="col-lg-2 col-md-2 col-sm-4 no-padding-left no-padding-right">
+                <div class="input-group">
+                  <input type="number" id='widget-year-input' class="form-control text-center dropdown-toggle"  min='1900' max='2016' aria-label="..." value='2012'>
+                  <span class="input-group-btn dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="caret"></span>
+                    </button>
+                      <ul id='widget-year-dropdown' class="dropdown-menu scrollable-menu" role='menu' aria-labelledby="dropdownMenu1">
+                      </ul>
+                  </span>
+                </div>
+              </div> <!-- col -->
+            </div> <!-- row -->
+
+
+            <!--Month Selection Box-->
+            <div class="row">
+              <div class="col-lg-2 col-md-2 col-sm-4 no-padding-left no-padding-right">
+                <div class="input-group">
+                  <input type="text" id='widget-month-input' class="form-control text-center dropdown-toggle" readonly aria-label="...">
+                  <span class="input-group-btn dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="caret"></span>
+                    </button>
+                      <ul id='widget-month-dropdown' class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenu2">
+                      </ul>
+                  </span>
+                </div>
+              </div> <!-- col -->
+            </div> <!-- row -->
+
+            <!--Date selection-->
+            <div id='widget-datepicker' class="input-group row bottom-buffer"></div>
+
+          </div><!-- containet -->
+
+
+
+
+          <!-- fallback -->
+          <div class='container visible-xs bottom-buffer' >
+            <div class='row'>
+              <p><input id="widget-date-input" type="date" class='visible-xs col-xs-12 text-center' name="bday"></p>
+            </div>
+          </div> <!--end of fallback-->
+          </form>
+          <!-- Buttons and message-->
+          <div class='container'>
+            <div class='row'>
+              <button  id="widget-submit-button" class="btn btn-primary btn-lg col-xs-12" role="button">Tell me my MathBirthday!</button>
+            </div>
+            <div class='row'>
+              <div id='alertmessage' class="alert alert-success hidden top-buffer bottom-buffer" role="alert"></div>
+            </div><!--End of Buttons and message-->
           </div>
-        </div> <!-- col -->
-      </div> <!-- row -->
 
 
-      <!--Month Selection Box-->
-      <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-4 no-padding-left no-padding-right">
-          <div class="input-group">
-            <input type="text" id='month-input' class="form-control text-center dropdown-toggle" readonly aria-label="..." value='September'>
-            <span class="input-group-btn dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <a class="caret"></a>
-              </button>
-                <ul id='month-dropdown' class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenu2">
-                </ul>
-            </span>
-          </div>
-        </div> <!-- col -->
-      </div> <!-- row -->
-
-      <!--Date selection-->
-      <div id='widget-datepicker' class="input-group row bottom-buffer"></div>
+        </div> <!--End of Widget-->
 
 
-    </div>
-    <!-- fallback -->
-    <div class='container visible-xs' >
-      <div class='row'>
-        <p><input id="birthdate" type="date" class='visible-xs' name="bday"></p>
-      </div>
-    </div> <!--end of fallback-->
-
-    <!-- Buttons and message-->
-      <div class='container row'>
-        <div><button  id="calculate-button" class="btn btn-primary btn-lg " role="button">Tell me my MathBirthday!</button></div>
-        <div id='alertmessage' class="alert alert-success hidden top-buffer " role="alert"></div></p>
-      </div><!--End of Buttons and message-->
-
-  </div> <!--end of Jumbotron-->
-</div> <!--end of container-->
+      </div> <!--end of Jumbotron-->
+    </div> <!--end of container-->
 
 
 
@@ -129,18 +146,20 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         var alertMessage = document.getElementById("alertmessage");
-        var datePicker = document.getElementById('birthdate');
+        var datePicker = document.getElementById('widget-date-input');
         var datepickerWidget = document.getElementById('widget-datepicker');
-        var inputYear = document.getElementById('year-input');
-        var inputMonth = document.getElementById('month-input');
-        var dropdownYear = document.getElementById('year-dropdown');
-        var dropdownMonth = document.getElementById('month-dropdown');
+        var inputYear = document.getElementById('widget-year-input');
+        var inputMonth = document.getElementById('widget-month-input');
+        var dropdownYear = document.getElementById('widget-year-dropdown');
+        var dropdownMonth = document.getElementById('widget-month-dropdown');
         var widget = new DatePickerWidget(inputYear,inputMonth,datePicker,datepickerWidget,dropdownYear,dropdownMonth);
 
 
         //validation
         datePicker.onchange = function(){
+
             alertMessage.classList.add('hidden');
+
             // Future dates not allowed.
             if  (!dateValidation(datePicker.value) ){
                 datePicker.valueAsDate = widget.today;
@@ -152,7 +171,7 @@
 
 
         //On click calculates the next mathbirthday.
-        document.getElementById('calculate-button').onclick = function () {
+        document.getElementById('widget-submit-button').onclick = function () {
             var dateborn = new Date(datePicker.value);
             var mbday = calculateNextMathbirthday(dateborn);
             var message = 'You were born on ' + datePicker.value +'. '
@@ -178,10 +197,8 @@
    function dateValidation(selectedDate){
       var today = new Date();
       var date = new Date(selectedDate);
-      if (date > today){
-          return false;
-      }
-      return true;
+      var minDate = new Date(1900,1,1);
+      return date < today && date > minDate;
    };
 
 /**
@@ -244,7 +261,6 @@
 *   @return {Date} newDate, resulting date.
 */
     function addDaysToDate(days, baseDate){
-        //
         var newDate = new Date(baseDate);
         newDate.setDate( newDate.getDate() + days);
         return newDate;
@@ -319,7 +335,7 @@ function DatePickerWidget(DOMInputYear,DOMInputMonth, DOMInputDatepicker,DOMWidg
 *   @result {String}, date of the button.
 */
   this.printDateButton = function (calendarDate){
-    var text1 = '<button class="btn btn-default col-lg-1 col-md-1 col-sm-2 hidden-xs text-center" type="button"';
+    var text1 = '<button class="btn btn-default col-lg-1 col-md-1 col-sm-1 hidden-xs text-center" type="button"';
     var text2 = '><span aria-hidden="true">';
     var text3 = '</span></button>';
     this.DOMWidgetDatepicker.innerHTML += text1 + 'id="date-' + calendarDate + '" ' + text2 + calendarDate + text3;
@@ -423,9 +439,9 @@ function DatePickerWidget(DOMInputYear,DOMInputMonth, DOMInputDatepicker,DOMWidg
 */
   this.addYearsToDropdown = function (){
     var date = new Date();
-    var text1 = '<li><a id="year-';
+    var text1 = '<li class="text-center"><span id="year-';
     var text2 = '">';
-    var text3 = '</a></li>';
+    var text3 = '</span></li>';
     var id = '';
 
     for (var i = 1900; i <= date.getFullYear(); i++) {
@@ -456,9 +472,9 @@ function DatePickerWidget(DOMInputYear,DOMInputMonth, DOMInputDatepicker,DOMWidg
 *   @param {DOMelement}, DOM UL element.
 */
   this.addMonthsToDropdown = function(){
-    var text1 = '<li><a id="month-';
+    var text1 = '<li class="text-center"><span  id="month-';
     var text2 = '">';
-    var text3 = '</a></li>';
+    var text3 = '</span></li>';
     for(month in this.monthsArray){
       this.DOMDropdownMonth.innerHTML += text1 + this.monthsArray[month] + text2  + this.monthsArray[month] + text3 ;
     };
@@ -483,7 +499,8 @@ function DatePickerWidget(DOMInputYear,DOMInputMonth, DOMInputDatepicker,DOMWidg
   today.setTime(today.getTime() - new Date().getTimezoneOffset()*60*1000);
   this.today = today;
   this.DOMInputDatePicker.valueAsDate = this.today;
-  this.DOMInputYear.value = today.getFullYear();
+  console.log(this.DOMInputYear);
+  this.DOMInputYear.value = this.today.getFullYear();
   this.DOMInputMonth.value = this.monthsArray[today.getMonth()];
   this.cursor = today.getDate();
 
@@ -494,41 +511,42 @@ function DatePickerWidget(DOMInputYear,DOMInputMonth, DOMInputDatepicker,DOMWidg
   this.addFnMonthsToDropdown();
 
   this.DOMInputYear.onchange = function(){
+    var id = 'date-' + this.cursor;
+    var finalDay = this.getFinalDayOfMonth(this.DOMInputYear.value, this.DOMInputMonth.value);
     if(this.DOMInputYear.value >= this.today.getFullYear() && this.months[this.DOMInputMonth.value] > this.today.getMonth()) {
       this.DOMInputMonth.value = this.monthsArray[this.today.getMonth()];
       if(this.cursor > this.today.getDate()){
         this.cursor = this.today.getDate();
       };
     }
-
     this.printMonthDays();
-    var finalDay = this.getFinalDayOfMonth(this.DOMInputYear.value, this.DOMInputMonth.value);
+
     if(this.cursor > finalDay){
       this.cursor = finalDay;
     };
     this.DOMInputDatePicker.valueAsDate = new Date(this.DOMInputYear.value, this.months[this.DOMInputMonth.value], this.cursor);
-    var id = 'date-' + this.cursor;
-    document.getElementById(id).classList.add('btn-success');}.bind(this);
+
+    document.getElementById(id).classList.add('btn-success');
+  }.bind(this);
 
 
   this.DOMInputMonth.onchange = function(){
-
+    var id = 'date-' + this.cursor;
+    var finalDay = this.getFinalDayOfMonth(this.DOMInputYear.value, this.DOMInputMonth.value);
     if(this.DOMInputYear.value >= this.today.getFullYear() && this.months[this.DOMInputMonth.value] > this.today.getMonth()) {
       this.DOMInputMonth.value = this.monthsArray[this.today.getMonth()];
       if(this.cursor > this.today.getDate()){
         this.cursor = this.today.getDate();
       };
     }
-      this.printMonthDays();
-      var finalDay = this.getFinalDayOfMonth(this.DOMInputYear.value, this.DOMInputMonth.value);
-      if(this.cursor > finalDay){
-        this.cursor = finalDay;
-      };
+    this.printMonthDays();
 
+    if(this.cursor > finalDay){
+      this.cursor = finalDay;
+    };
 
-      this.DOMInputDatePicker.valueAsDate = new Date(this.DOMInputYear.value, this.months[this.DOMInputMonth.value], this.cursor);
-      var id = 'date-' + this.cursor;
-      document.getElementById(id).classList.add('btn-success');
+    this.DOMInputDatePicker.valueAsDate = new Date(this.DOMInputYear.value, this.months[this.DOMInputMonth.value], this.cursor);
+    document.getElementById(id).classList.add('btn-success');
 
 
   }.bind(this);
