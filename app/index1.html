@@ -136,7 +136,6 @@
 *   - set Default values.
 *   - Message must say "Your next math birthday is your 10^n-day-old birthday on X date".
 */
-
     monthsArray = [
       "January",
       "February",
@@ -167,16 +166,12 @@
       December : 11,
   };
 
-
     document.addEventListener("DOMContentLoaded", function() {
         var alertMessage = document.getElementById("alertmessage");
         var datePicker = document.getElementById('birthdate');
         var datepickerWidget = document.getElementById('widget-datepicker');
         var inputYear = document.getElementById('year-input');
         var inputMonth = document.getElementById('month-input');
-        var dropdownYear = document.getElementById('year-dropdown');
-        var dropdownMonth = document.getElementById('month-dropdown');
-        var datePickerWidget = new DatePickerWidget(inputYear,inputMonth,datePicker,datepickerWidget,dropdownYear,dropdownMonth);
 
         //default value for datepicker.
         var today = new Date();
@@ -198,8 +193,7 @@
 
 
         datepickerWidget.innerHTML = '';
-        //printMonthDays(datepickerWidget,inputMonth.value,inputYear.value,months);
-        datePickerWidget.printMonthDays();
+        printMonthDays(datepickerWidget,inputMonth.value,inputYear.value,months);
         addYearsToDropdown(document.getElementById('year-dropdown'), inputYear);
         addMonthsToDropdown(document.getElementById('month-dropdown'),monthsArray);
         addFnYearsToDropdown(inputYear);
@@ -337,102 +331,6 @@ function formatDate(date) {
     return [year, month, day].join('-');
 };
 
-function objectTest(){
-  this.number = 0;
-  this.add1 = function (){
-    this.number +=1;
-  };
-};
-
-function DatePickerWidget(DOMInputYear,DOMInputMonth, DOMInputDatepicker,DOMWidgetDatepicker,
-                          DOMDropdownYear,DOMDropdownMonth){
-
-  this.DOMInputYear = DOMInputYear;
-  this.DOMInputMonth = DOMInputMonth;
-  this.DOMInputDatePicker = DOMInputDatepicker;
-  this.DOMWidgetDatepicker = DOMWidgetDatepicker;
-  this.DOMDropdownMonth = DOMDropdownMonth;
-  this.DOMDropdownYear = DOMDropdownYear;
-
-  this.monthsArray =  ["January",
-                     "February",
-                     "March",
-                     "April",
-                     "May",
-                     "June",
-                     "July",
-                     "August",
-                     "September",
-                     "October",
-                     "November",
-                     "December"
-                     ];
-  this.months =  {
-                  January: 0,
-                  February: 1,
-                  March: 2,
-                  April: 3,
-                  May: 4,
-                  June: 5,
-                  July: 6,
-                  August: 7,
-                  September: 8,
-                  October: 9,
-                  November: 10,
-                  December : 11
-                };
-/**
-*   prints a button with a date in inner HTML of DOM Element
-*
-*   @param {DOMelement}, DOM element
-*   @result {String}, date of the button.
-*/
-  this.printDateButton = function (calendarDate){
-    var text1 = '<button class="btn btn-default col-lg-1 col-md-1 col-sm-2 hidden-xs text-center" type="button"';
-    var text2 = '><span aria-hidden="true">';
-    var text3 = '</span></button>';
-    this.DOMWidgetDatepicker.innerHTML += text1 + 'id="date-' + calendarDate + '" ' + text2 + calendarDate + text3;
-  };
-
-  /**
-*   prints a month in inner HTML of DOM Element
-*
-*   @param {DOMelement}, DOM element
-*   @result {String}, date of the button.
-*/
-  this.printMonthDays =  function(){
-
-    for (var i = 1; i <= this.getFinalDayOfMonth(this.DOMInputYear.value,this.DOMInputMonth.value); i++) {
-      this.printDateButton(i);
-    }
-  };
-
-/**
-*   gets the final day of the month
-*
-*   @param {number} year,
-*   @param {String} Month,
-*   @result {number}, last day of the month.
-*/
-  this.getFinalDayOfMonth = function(year, month){
-    var printMonth = new Date(year,this.months[month],1);
-    printMonth.setMonth(printMonth.getMonth() + 1);
-    printMonth.setDate(printMonth.getDate() - 1);
-    return printMonth.getDate();
-  };
-
-
-
-
-
-
-};
-
-
-
-
-
-
 /**
 *   prints a button with a date in inner HTML of DOM Element
 *
@@ -491,7 +389,7 @@ function dateCallbackAssignment(DOMmonth,DOMyear,DOMdatepicker,monthsObject){
   var id = '';
   for (var i = 1; i <= getFinalDayOfMonth(DOMyear.value,DOMmonth.value,monthsObject); i++) {
     id = 'date-' + i;
-    document.getElementById(id).onclick = addClosureForOnclickDate(DOMdatepicker,DOMyear,DOMmonth,i,monthsObject);
+    document.getElementById(id).onclick = addClosureForOnclickDate(DOMdatepicker,i,monthsObject);
   }
 }
 
@@ -516,15 +414,15 @@ function addClosureForOnclickMonthOrYear(DOM,value){
 *   @param {object} DOMMonth, *DOM element input for month.
 *   @param {number} date, number thar represents a calendar date (ex. 22).
 */
-function addClosureForOnclickDate(DOMdatepicker,DOMYear,DOMMonth,date,monthsObject){
+function addClosureForOnclickDate(DOMdatepicker,date,monthsObject){
 
   return function closureForOnclickDate(){
 
       var element = document.querySelector('.btn-success');
       console.log(element);
 
-      if (element !== null){
-        element.classList.remove('btn-success');
+      if (elements !== null){
+        elements.classList.remove('btn-success');
       }
 
       nextDate = new Date(DOMYear.value, monthsObject[DOMMonth.value], date);
