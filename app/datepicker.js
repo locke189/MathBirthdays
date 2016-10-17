@@ -13,13 +13,13 @@ class DatePickerWidget {
     this.startYear = startYear;
     this.endYear = endYear;
     this.buttonText = buttonText;
-    console.log(this.buttonText);
+    console.log(this.DOMElement);
     this._createSelectionBoxes();
     this._createForm();
 
-    this.month = new DatePickerMonth(`${this.Id}-widget-datepicker`);
-    this.month.getDaysOfMonth();
-    this.month.setHtml();
+    //this.month = new DatePickerMonth(`${this.Id}-widget-datepicker`);
+    //this.month.getDaysOfMonth();
+    //this.month.setHtml();
 
     //this._getDOMElements()
 
@@ -57,6 +57,7 @@ class DatePickerWidget {
       </form> <!-- form -->
 `;
 
+    this.DOMElement.innerHTML = this.html;
 
   }
 
@@ -218,7 +219,7 @@ class DatePickerMonth {
   *   @result {number}, last day of the month.
   */
   getFinalDayOfMonth(year, month){
-    var printMonth = new Date(year,month,1);
+    const printMonth = new Date(year,month,1);
     printMonth.setMonth(printMonth.getMonth() + 1);
     printMonth.setDate(printMonth.getDate() - 1);
     return printMonth.getDate();
