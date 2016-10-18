@@ -16,10 +16,12 @@ class DatePickerWidget {
     console.log(this.DOMElement);
     this._createSelectionBoxes();
     this._createForm();
-
-    //this.month = new DatePickerMonth(`${this.Id}-widget-datepicker`);
-    //this.month.getDaysOfMonth();
-    //this.month.setHtml();
+    this.today = new Date();
+    this.month = new DatePickerMonth(
+      `${this.Id}-widget-datepicker`,
+      this.today.getFullYear(),
+      this.today.getMonth(),
+      this.today.getDate());
 
     //this._getDOMElements()
 
@@ -50,11 +52,14 @@ class DatePickerWidget {
     this.html += this.yearBoxHtml;
     this.html += this.monthBoxHtml;
     this.html += this.datePickerHtml;
+
+    this.html +=
+`       </div> <!-- .container -->`;
+
     this.html += this.mobileFallbackHtml;
 
     this.html +=
-`       </div> <!-- .container -->
-      </form> <!-- form -->
+`      </form> <!-- form -->
 `;
 
     this.DOMElement.innerHTML = this.html;
@@ -115,7 +120,7 @@ class DatePickerWidget {
           <!-- fallback -->
           <div class="container visible-xs bottom-buffer" >
             <div class="row">
-              <p><input id="${this.Id}-widget-date-input" type="date" class="visible-xs col-xs-12 text-center" name="bday"></p>
+              <p><input id="${this.Id}-widget-date-input" type="date" class="visible-xs col-xs-12 text-center" name="date"></p>
             </div>
           </div> <!--end of fallback-->`;
 
@@ -134,42 +139,7 @@ class DatePickerWidget {
     this.DOMDropdownYear = document.getElementById(`${this.Id}-widget-month-dropdown`);
   }
 
-
-
-
-
-
-
-
-
-/**
-*   prints a button with a date in inner HTML of DOM Element
-*
-*   @param {DOMelement}, DOM element
-*   @result {String}, date of the button.
-*/
-  _printDateButton(calendarDate){
-    const text1 = '<button class="btn btn-default col-lg-1 col-md-1 col-sm-1 hidden-xs text-center" type="button"';
-    const text2 = '><span aria-hidden="true">';
-    const text3 = '</span></button>';
-    this.DOMWidgetDatepicker.innerHTML += `${text1} id="date-${calendarDate}" ${text2 + calendarDate + text3}`;
-  };
-
-/**
-*   prints a month in inner HTML of DOM Element
-*
-*   @param {DOMelement}, DOM element
-*   @result {String}, date of the button.
-*/
-  _printMonthDays(){
-    this.DOMWidgetDatepicker.innerHTML = ''
-    for (let i = 1; i <= this._getFinalDayOfMonth(this.DOMInputYear.value,this.DOMInputMonth.value); i++) {
-      this._printDateButton(i);
-    }
-    this._dateCallbackAssignment();
-  };
-
-}
+} // end of class
 
 
 /**  day buttons datepicker widget object  */
@@ -180,6 +150,7 @@ class DatePickerMonth {
   *
   */
   constructor(DOMElementID, year = 2016, month = 0, date = 1){
+    console.log("Creating DatePickerMonth Object");
     this.DOMElement = document.getElementById(DOMElementID);
     this.id = DOMElementID;
     this.days = [];
@@ -187,8 +158,10 @@ class DatePickerMonth {
     this.year = year;
     this.date = date;
     this.html = '';
-    console.log("****")
-    console.log(this.id);
+    this._getDaysOfMonth();
+    this._setHtml();
+
+
   }
 
   /**
@@ -196,19 +169,18 @@ class DatePickerMonth {
   * @param {Number} year, format YYYY
   * @param {Number} month, format MM
   */
-  getDaysOfMonth(year = this.year, month = this.month){
-    const finalDayOfMonth = this.getFinalDayOfMonth(year,month);
+  _getDaysOfMonth(year = this.year, month = this.month){
+    const finalDayOfMonth = this._getFinalDayOfMonth(year,month);
     let day = {};
     this.days = [];
 
-    for(let i; i <= finalDayOfMonth; i++){
+    for(let i = 1; i <= finalDayOfMonth; i++){
       day = {};
-      day.html = getDateButtonHtml(i);
+      day.html = this._getDateButtonHtml(i);
       day.id = `${this.id}-datebutton-${i}`;
       day.value = i;
-      days.push(day)
+      this.days.push(day);
     }
-
   }
 
   /**
@@ -218,12 +190,12 @@ class DatePickerMonth {
   *   @param {number} Month,
   *   @result {number}, last day of the month.
   */
-  getFinalDayOfMonth(year, month){
+  _getFinalDayOfMonth(year, month){
     const printMonth = new Date(year,month,1);
     printMonth.setMonth(printMonth.getMonth() + 1);
     printMonth.setDate(printMonth.getDate() - 1);
     return printMonth.getDate();
-  };
+  }
 
   /**
   *   sets html for a given date
@@ -231,19 +203,19 @@ class DatePickerMonth {
   *   @param {DOMelement}, DOM element
   *   @result {String}, date of the button.
   */
-  getDateButtonHtml(calendarDate){
-    const text1 = `<button id="dp-datebutton-${calendardate}" class="btn btn-default col-lg-1 col-md-1 col-sm-1 hidden-xs text-center" type="button"`;
+  _getDateButtonHtml(calendarDate){
+    const text1 = `<button id="dp-datebutton-${calendarDate}" class="btn btn-default col-lg-1 col-md-1 col-sm-1 hidden-xs text-center" type="button"`;
     const text2 = '><span aria-hidden="true">';
     const text3 = '</span></button>';
     return `${text1} id="date-${calendarDate}" ${text2 + calendarDate + text3}`;
-  };
+  }
 
 
-  setHtml(){
+  _setHtml(){
     this.html = '';
     this.days.forEach( day => this.html += day.html );
     this.DOMElement.innerHTML = this.html;
-  };
+  }
 
 
 }
@@ -298,13 +270,13 @@ document.addEventListener("DOMContentLoaded",() => {
     buttonText: 'Test',
     startYear: 1900,
     endYear: 2016
-  }
+  };
 
   const dateWidget = new DatePickerWidget(options);
 
 
 
-})
+});
 
 
 
