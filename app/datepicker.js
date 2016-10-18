@@ -1,4 +1,3 @@
-console.log("JS Loaded");
 /**  datepicker widget object  */
 class DatePickerWidget {
 
@@ -13,7 +12,6 @@ class DatePickerWidget {
     this.startYear = startYear;
     this.endYear = endYear;
     this.buttonText = buttonText;
-    console.log(this.DOMElement);
     this._createSelectionBoxes();
     this._createForm();
     this.today = new Date();
@@ -21,7 +19,8 @@ class DatePickerWidget {
       `${this.Id}-widget-datepicker`,
       this.today.getFullYear(),
       this.today.getMonth(),
-      this.today.getDate());
+      this.today.getDate() );
+
 
     //this._getDOMElements()
 
@@ -54,7 +53,8 @@ class DatePickerWidget {
     this.html += this.datePickerHtml;
 
     this.html +=
-`       </div> <!-- .container -->`;
+`       </div> <!-- .container -->
+`;
 
     this.html += this.mobileFallbackHtml;
 
@@ -150,7 +150,6 @@ class DatePickerMonth {
   *
   */
   constructor(DOMElementID, year = 2016, month = 0, date = 1){
-    console.log("Creating DatePickerMonth Object");
     this.DOMElement = document.getElementById(DOMElementID);
     this.id = DOMElementID;
     this.days = [];
@@ -160,6 +159,7 @@ class DatePickerMonth {
     this.html = '';
     this._getDaysOfMonth();
     this._setHtml();
+    this._setDateCallbacks();
 
 
   }
@@ -177,7 +177,8 @@ class DatePickerMonth {
     for(let i = 1; i <= finalDayOfMonth; i++){
       day = {};
       day.html = this._getDateButtonHtml(i);
-      day.id = `${this.id}-datebutton-${i}`;
+      day.id = `${this.id}-dp-datebutton-${i}`;
+      day.DOM = document.getElementById(`${this.id}-dp-datebutton-${i}`);
       day.value = i;
       this.days.push(day);
     }
@@ -204,22 +205,40 @@ class DatePickerMonth {
   *   @result {String}, date of the button.
   */
   _getDateButtonHtml(calendarDate){
-    const text1 = `<button id="dp-datebutton-${calendarDate}" class="btn btn-default col-lg-1 col-md-1 col-sm-1 hidden-xs text-center" type="button"`;
+    const text1 = `<button id="${this.id}-dp-datebutton-${calendarDate}" class="btn btn-default col-lg-1 col-md-1 col-sm-1 hidden-xs text-center" type="button"`;
     const text2 = '><span aria-hidden="true">';
     const text3 = '</span></button>';
-    return `${text1} id="date-${calendarDate}" ${text2 + calendarDate + text3}`;
+    return `${text1} ${text2 + calendarDate + text3}`;
   }
 
-
+  /**
+  *   Prints HTML for all days in a month
+  *
+  */
   _setHtml(){
     this.html = '';
     this.days.forEach( day => this.html += day.html );
     this.DOMElement.innerHTML = this.html;
   }
 
+  /**
+  *   assigns callback function for date buttons
+  *
+  */
+  _setDateCallbacks(){
+    this.days.forEach( day => {
+      day.DOM = document.getElementById(day.id);
+      day.DOM.onclick = () => {
+        const element = document.querySelector(`.btn-success, .${day.id}`);
+        if (element !== null)
+          element.classList.remove('btn-success', `${day.id}`);
+        day.DOM.classList.add('btn-success', `${day.id}`);
+        this.date = day.value;
+      };
+    } );
+  }
 
 }
-
 
 
 
@@ -263,7 +282,7 @@ class DatePickerButtons{
 
 //****************************************************************************************************/
 
-document.addEventListener("DOMContentLoaded",() => {
+document.addEventListener('DOMContentLoaded',() => {
 
   const options = {
     DOMElementID: 'widget',
