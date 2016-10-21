@@ -5,38 +5,45 @@ class DatePickerWidget {
   * Creates the Datepicker Widget
   *
   */
-  constructor({DOMElementID, buttonText, startYear, endYear}){
+  constructor({DOMElementID, startYear, endYear}){
     this.DOMElement = document.getElementById(DOMElementID);
-    this.Id = DOMElementID;
+    this.id = DOMElementID;
     this.html = '';
     this.startYear = startYear;
     this.endYear = endYear;
-    this.buttonText = buttonText;
+    this.months = [
+      {text: 'January', number: 0},
+      {text: 'February', number: 1},
+      {text: 'March', number: 2},
+      {text: 'May', number: 3},
+      {text: 'April', number: 4},
+      {text: 'June', number: 5},
+      {text: 'July', number: 6},
+      {text: 'August', number: 7},
+      {text: 'September', number: 8},
+      {text: 'October', number: 9},
+      {text: 'November', number: 10},
+      {text: 'December', number: 11}
+    ];
+
+    this.today = new Date();  //beware... this is not taking the limits
+    this.year = this.today.getFullYear();
+    this.month = this.today.getMonth();
+
+
     this._createSelectionBoxes();
     this._createForm();
-    this.today = new Date();
-    this.month = new DatePickerMonth(
-      `${this.Id}-widget-datepicker`,
-      this.today.getFullYear(),
-      this.today.getMonth(),
-      this.today.getDate() );
+    this.datePicker = new DatePickerMonth(
+      `${this.id}-widget-datepicker`,
+      this.year,
+      this.month,
+      this.today.getDate()
+      );
+    this._getDOMElements();
+    this._addYearsToDropdown();
+    this._addMonthsToDropdown();
+  } // .constructor
 
-
-    //this._getDOMElements()
-
-    /*
-    //Initialization
-    const today = new Date();
-    today.setTime(today.getTime() - new Date().getTimezoneOffset()*60*1000);
-    this.today = today;
-
-    this.DOMInputDatePicker.valueAsDate = this.today;
-    console.log(this.DOMInputYear);
-    this.DOMInputYear.value = this.today.getFullYear();
-    this.DOMInputMonth.value = this.monthsArray[today.getMonth()];
-    this.cursor = today.getDate();
-    */
-  }
 
   /**
   * Creates a form to include all selection boxes
@@ -44,27 +51,27 @@ class DatePickerWidget {
   */
   _createForm(){
 
-    this.html =
-`     <form>
+    this.html =`
+      <form>
         <div class="container hidden-xs">
-`;
+        `;
     this.html += this.yearBoxHtml;
     this.html += this.monthBoxHtml;
     this.html += this.datePickerHtml;
 
-    this.html +=
-`       </div> <!-- .container -->
-`;
+    this.html +=`
+        </div> <!-- .container -->
+        `;
 
     this.html += this.mobileFallbackHtml;
 
-    this.html +=
-`      </form> <!-- form -->
-`;
+    this.html +=`
+      </form> <!-- form -->
+      `;
 
     this.DOMElement.innerHTML = this.html;
 
-  }
+  } //._createForm
 
 
   /**
@@ -73,23 +80,23 @@ class DatePickerWidget {
   */
   _createSelectionBoxes(){
     //Year Selection Box
-    this.yearBoxHtml =
-`
+    this.yearBoxHtml =`
           <!--Year Selection Box-->
             <div class="row">
               <div class="col-lg-2 col-md-2 col-sm-4 no-padding-left no-padding-right">
                 <div class="input-group">
-                  <input type="number" id="${this.Id}-widget-year-input" class="form-control text-center dropdown-toggle"  min="${this.startYear}" max="${this.endYear}" aria-label="..." value="2012">
+                  <input type="number" id="${this.id}-widget-year-input" class="form-control text-center dropdown-toggle"  min="${this.startYear}" max="${this.endYear}" aria-label="..." value="${this.year}">
                   <div class="input-group-btn dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="${this.Id}-dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="${this.id}-dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="caret"></span>
                     </button>
-                      <ul id="${this.Id}-widget-year-dropdown" class="dropdown-menu scrollable-menu" role="menu" aria-labelledby="dropdownMenu1">
+                      <ul id="${this.id}-widget-year-dropdown" class="dropdown-menu scrollable-menu" role="menu" aria-labelledby="dropdownMenu1">
                       </ul>
                   </div>
                 </div>
               </div> <!-- col -->
-            </div> <!-- row -->`;
+            </div> <!-- row -->
+            `;
 
     //Month Selection Box
     this.monthBoxHtml = `
@@ -97,22 +104,22 @@ class DatePickerWidget {
             <div class="row">
               <div class="col-lg-2 col-md-2 col-sm-4 no-padding-left no-padding-right">
                 <div class="input-group">
-                  <input type="text" id="${this.Id}-widget-month-input" class="form-control text-center dropdown-toggle" readonly aria-label="...">
+                  <input type="text" id="${this.id}-widget-month-input" class="form-control text-center dropdown-toggle" readonly aria-label="..." value="${this.months[this.month].text}">
                   <span class="input-group-btn dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="${this.Id}-dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="${this.id}-dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="caret"></span>
                     </button>
-                      <ul id="${this.Id}-widget-month-dropdown" class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenu2">
+                      <ul id="${this.id}-widget-month-dropdown" class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenu2">
                       </ul>
                   </span>
                 </div>
               </div> <!-- col -->
             </div> <!-- row -->
-`;
+            `;
 
     this.datePickerHtml = `
             <!--Date selection-->
-            <div id="${this.Id}-widget-datepicker" class="input-group row bottom-buffer"></div>
+            <div id="${this.id}-widget-datepicker" class="input-group row bottom-buffer"></div>
       `;
 
     //Fallback for mobile
@@ -120,26 +127,88 @@ class DatePickerWidget {
           <!-- fallback -->
           <div class="container visible-xs bottom-buffer" >
             <div class="row">
-              <p><input id="${this.Id}-widget-date-input" type="date" class="visible-xs col-xs-12 text-center" name="date"></p>
+              <p><input id="${this.id}-widget-date-input" type="date" class="visible-xs col-xs-12 text-center" name="date"></p>
             </div>
-          </div> <!--end of fallback-->`;
+          </div> <!--end of fallback-->
+          `;
 
-  }
+  } // ._createSelectionBoxes
 
 /**
 * Creates DOM Element properties
 *
 */
   _getDOMElements(){
-    this.DOMInputYear = document.getElementById(`${this.Id}-widget-year-input`);
-    this.DOMInputMonth = document.getElementById(`${this.Id}-widget-month-input`);
-    this.DOMInputDatePicker = document.getElementById(`${this.Id}-widget-date-input`);
-    this.DOMWidgetDatepicker = document.getElementById(`${this.Id}-widget-datepicker`);
-    this.DOMDropdownMonth = document.getElementById(`${this.Id}-widget-year-dropdown`);
-    this.DOMDropdownYear = document.getElementById(`${this.Id}-widget-month-dropdown`);
-  }
+    this.DOMInputYear = document.getElementById(`${this.id}-widget-year-input`);
+    this.DOMInputMonth = document.getElementById(`${this.id}-widget-month-input`);
+    this.DOMInputDatePicker = document.getElementById(`${this.id}-widget-date-input`);
+    this.DOMWidgetDatepicker = document.getElementById(`${this.id}-widget-datepicker`);
+    this.DOMDropdownMonth = document.getElementById(`${this.id}-widget-month-dropdown`);
+    this.DOMDropdownYear = document.getElementById(`${this.id}-widget-year-dropdown`);
+  }// ._getDOMElements
+
+/**
+*   sets years in dropdown list
+*
+*/
+  _addYearsToDropdown(){
+    for (let i = this.startYear; i <= this.endYear; i++) {
+      this.DOMDropdownYear.innerHTML += `<li class="text-center"><a id="${this.id}-year-${i}">${i}</a></li>`;
+    }
+    this._setYearsCallback();
+  } // ._addYearsToDropdown
+
+/**
+*   sets months in calback list
+*
+*/
+  _setYearsCallback(){
+    let yearDom;
+    for (let i = this.startYear; i <= this.endYear; i++) {
+      yearDom = document.getElementById(`${this.id}-year-${i}`);
+      yearDom.onclick = () => {
+        this.DOMInputYear.value = i;
+        this.year = i;
+        this.datePicker.changeDate(this.year, this.month);
+      };
+    }
+  } // ._setYearsCallback
+
+
+
+/**
+*   sets months in dropdown list
+*
+*/
+  _addMonthsToDropdown(){
+    this.months.forEach((month) => {
+      this.DOMDropdownMonth.innerHTML += `<li class="text-center"><a  id="${this.id}-month-${month.number}">${month.text}</a></li>` ;
+    });
+    this._setMonthsCallback();
+  } // ._addMonthsToDropdown
+
+/**
+*   sets months in calback list
+*
+*/
+  _setMonthsCallback(){
+    let monthDom;
+    this.months.forEach((month)=> {
+      monthDom = document.getElementById(`${this.id}-month-${month.number}`);
+      monthDom.onclick = () => {
+        this.DOMInputMonth.value = month.text;
+        this.month = month.number;
+        this.datePicker.changeDate(this.year, this.month);
+      };
+    });
+  } // ._setMonthsCallback
+
+
 
 } // end of class
+
+
+
 
 
 /**  day buttons datepicker widget object  */
@@ -164,6 +233,26 @@ class DatePickerMonth {
 
   }
 
+  changeDate(year, month){
+    this.month = month;
+    this.year = year;
+
+    if( this.date >  this._getFinalDayOfMonth(year,month) ) {
+      this.date = this._getFinalDayOfMonth(year,month);
+    }
+
+
+    this.html = '';
+    this._getDaysOfMonth();
+    this._setHtml();
+    this._setDateCallbacks();
+  }
+
+  getDate(){
+    return this.date;
+  }
+
+
   /**
   * Creates the Datepicker Widget month
   * @param {Number} year, format YYYY
@@ -173,7 +262,6 @@ class DatePickerMonth {
     const finalDayOfMonth = this._getFinalDayOfMonth(year,month);
     let day = {};
     this.days = [];
-
     for(let i = 1; i <= finalDayOfMonth; i++){
       day = {};
       day.html = this._getDateButtonHtml(i);
@@ -182,6 +270,7 @@ class DatePickerMonth {
       day.value = i;
       this.days.push(day);
     }
+    return this.days;
   }
 
   /**
@@ -219,6 +308,9 @@ class DatePickerMonth {
     this.html = '';
     this.days.forEach( day => this.html += day.html );
     this.DOMElement.innerHTML = this.html;
+    document.getElementById(`${this.id}-dp-datebutton-${this.date}`).classList.add('btn-success', `${this.id}`);
+
+    return this.html;
   }
 
   /**
@@ -229,10 +321,10 @@ class DatePickerMonth {
     this.days.forEach( day => {
       day.DOM = document.getElementById(day.id);
       day.DOM.onclick = () => {
-        const element = document.querySelector(`.btn-success, .${day.id}`);
+        const element = document.querySelector(`.btn-success, .${this.id}`);
         if (element !== null)
-          element.classList.remove('btn-success', `${day.id}`);
-        day.DOM.classList.add('btn-success', `${day.id}`);
+          element.classList.remove('btn-success', `${this.id}`);
+        day.DOM.classList.add('btn-success', `${this.id}`);
         this.date = day.value;
       };
     } );
@@ -241,41 +333,6 @@ class DatePickerMonth {
 }
 
 
-
-
-
-
-
-
-/*
-
-class DatePickerButtons{
-
-}
-
-
-/**
-* Creates the Datepicker Widget
-*
-
-  _createButtonsMessage(){
-    //Fallback for mobile
-    console.log(this.buttonText);
-    this.html += `
-          <!-- Buttons and message-->
-          <div class="container">
-            <div class="row">
-              <button  id="${this.Id}-widget-submit-button" class="btn btn-primary btn-lg col-xs-12" role="button">${this.buttonText}</button>
-            </div>
-            <div class="row">
-              <div id="${this.Id}-alertmessage" class="alert alert-success hidden top-buffer bottom-buffer" role="alert"></div>
-            </div><!--End of Buttons and message-->
-          </div>`;
-
-  this.DOMElement.innerHTML = this.html;
-  }
-
-*/
 
 
 
