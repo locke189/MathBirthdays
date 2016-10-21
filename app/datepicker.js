@@ -35,6 +35,7 @@ class DatePickerWidget {
     this._createForm();
     this.datePicker = new DatePickerMonth(
       `${this.id}-widget-datepicker`,
+      this,
       this.year,
       this.month,
       this.today.getDate()
@@ -42,9 +43,26 @@ class DatePickerWidget {
     this._getDOMElements();
     this._addYearsToDropdown();
     this._addMonthsToDropdown();
+    this._setFallbackDatepickerCallback();
+    this.DOMInputDatePicker.valueAsDate = this.getDate();
   } // .constructor
 
+//**********PUBLIC***************
 
+
+  /**
+  * Returns date object with selected date
+  *
+  * @return {Date} object, returnd date object
+  */
+  getDate(){
+    return new Date( this.year, this.month, this.datePicker.getDate() );
+  }
+
+
+//**********END OF PUBLIC***************
+
+//**********PRIVATE***************
   /**
   * Creates a form to include all selection boxes
   *
@@ -54,21 +72,13 @@ class DatePickerWidget {
     this.html =`
       <form>
         <div class="container hidden-xs">
-        `;
-    this.html += this.yearBoxHtml;
-    this.html += this.monthBoxHtml;
-    this.html += this.datePickerHtml;
-
-    this.html +=`
+          ${this.yearBoxHtml}
+          ${this.monthBoxHtml}
+          ${this.datePickerHtml}
         </div> <!-- .container -->
-        `;
-
-    this.html += this.mobileFallbackHtml;
-
-    this.html +=`
+        ${this.mobileFallbackHtml}
       </form> <!-- form -->
       `;
-
     this.DOMElement.innerHTML = this.html;
 
   } //._createForm
@@ -105,13 +115,13 @@ class DatePickerWidget {
               <div class="col-lg-2 col-md-2 col-sm-4 no-padding-left no-padding-right">
                 <div class="input-group">
                   <input type="text" id="${this.id}-widget-month-input" class="form-control text-center dropdown-toggle" readonly aria-label="..." value="${this.months[this.month].text}">
-                  <span class="input-group-btn dropdown">
+                  <div class="input-group-btn dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="${this.id}-dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="caret"></span>
                     </button>
                       <ul id="${this.id}-widget-month-dropdown" class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenu2">
                       </ul>
-                  </span>
+                  </div>
                 </div>
               </div> <!-- col -->
             </div> <!-- row -->
@@ -170,6 +180,7 @@ class DatePickerWidget {
         this.DOMInputYear.value = i;
         this.year = i;
         this.datePicker.changeDate(this.year, this.month);
+        this.DOMInputDatePicker.valueAsDate = this.getDate();
       };
     }
   } // ._setYearsCallback
@@ -199,17 +210,35 @@ class DatePickerWidget {
         this.DOMInputMonth.value = month.text;
         this.month = month.number;
         this.datePicker.changeDate(this.year, this.month);
+        this.DOMInputDatePicker.valueAsDate = this.getDate();
       };
     });
   } // ._setMonthsCallback
 
 
+/**
+*   sets datepicker calback
+*
+*/
+  _setFallbackDatepickerCallback(){
+    //validation
+    this.DOMInputDatePicker.onchange = () => {
+      const date = new Date(this.DOMInputDatePicker.value);
+      date.setTime(date.getTime() + new Date().getTimezoneOffset()*60*1000);
+      this.month = date.getMonth();
+      this.DOMInputMonth.value = this.months[this.month].text;
+      this.year = date.getFullYear();
+      this.DOMInputYear.value = this.year;
+      this.datePicker.changeDate( this.year, this.month, date.getDate() );
+    };
+  }
 
-} // end of class
+//**********END OF PRIVATE***************
+} // .DatePickerWidget.
 
 
 
-
+//**********PRIVATE CLASS***************
 
 /**  day buttons datepicker widget object  */
 class DatePickerMonth {
@@ -218,7 +247,9 @@ class DatePickerMonth {
   * Creates the Datepicker Widget month
   *
   */
-  constructor(DOMElementID, year = 2016, month = 0, date = 1){
+  constructor(DOMElementID, widget, year = 2016, month = 0, date = 1 ){
+
+    this.parentWidget = widget;
     this.DOMElement = document.getElementById(DOMElementID);
     this.id = DOMElementID;
     this.days = [];
@@ -233,14 +264,21 @@ class DatePickerMonth {
 
   }
 
-  changeDate(year, month){
+  /**
+  * Refreshes the datePickerMonth object for new year and month
+  * @param {Number} year, format YYYY
+  * @param {Number} month, format MM
+  */
+  changeDate(year, month, date = this.date){
     this.month = month;
     this.year = year;
 
-    if( this.date >  this._getFinalDayOfMonth(year,month) ) {
+    if( date >  this._getFinalDayOfMonth(year,month) ) {
       this.date = this._getFinalDayOfMonth(year,month);
     }
-
+    else{
+      this.date = date;
+    }
 
     this.html = '';
     this._getDaysOfMonth();
@@ -248,6 +286,10 @@ class DatePickerMonth {
     this._setDateCallbacks();
   }
 
+  /**
+  * returns this.date
+  *
+  */
   getDate(){
     return this.date;
   }
@@ -260,15 +302,14 @@ class DatePickerMonth {
   */
   _getDaysOfMonth(year = this.year, month = this.month){
     const finalDayOfMonth = this._getFinalDayOfMonth(year,month);
-    let day = {};
     this.days = [];
     for(let i = 1; i <= finalDayOfMonth; i++){
-      day = {};
-      day.html = this._getDateButtonHtml(i);
-      day.id = `${this.id}-dp-datebutton-${i}`;
-      day.DOM = document.getElementById(`${this.id}-dp-datebutton-${i}`);
-      day.value = i;
-      this.days.push(day);
+      this.days.push({
+        html:this._getDateButtonHtml(i),
+        id: `${this.id}-dp-datebutton-${i}`,
+        DOM: document.getElementById(`${this.id}-dp-datebutton-${i}`),
+        value: i
+      });
     }
     return this.days;
   }
@@ -294,10 +335,11 @@ class DatePickerMonth {
   *   @result {String}, date of the button.
   */
   _getDateButtonHtml(calendarDate){
-    const text1 = `<button id="${this.id}-dp-datebutton-${calendarDate}" class="btn btn-default col-lg-1 col-md-1 col-sm-1 hidden-xs text-center" type="button"`;
-    const text2 = '><span aria-hidden="true">';
-    const text3 = '</span></button>';
-    return `${text1} ${text2 + calendarDate + text3}`;
+    return `
+    <button id="${this.id}-dp-datebutton-${calendarDate}" class="btn btn-default col-lg-1 col-md-1 col-sm-1 hidden-xs text-center" type="button">
+      <span aria-hidden="true"> ${calendarDate}</span>
+    </button>
+    `;
   }
 
   /**
@@ -322,19 +364,141 @@ class DatePickerMonth {
       day.DOM = document.getElementById(day.id);
       day.DOM.onclick = () => {
         const element = document.querySelector(`.btn-success, .${this.id}`);
-        if (element !== null)
+        if (element)
           element.classList.remove('btn-success', `${this.id}`);
         day.DOM.classList.add('btn-success', `${this.id}`);
         this.date = day.value;
+        this.parentWidget.DOMInputDatePicker.valueAsDate = this.parentWidget.getDate();
       };
     } );
   }
 
 }
+//**********END OF PRIVATE CLASS***************
+
+/**  Mathbirthday calculator  */
+class MathBirthdayCalculator {
+
+  /**
+  * Creates the Datepicker Widget
+  *
+  */
+  constructor(DOMElementID, dateFunction){
+    this.DOMElement = document.getElementById(DOMElementID);
+    this.id = DOMElementID;
+    this.getDate = dateFunction;
+    this.months = [
+      {text: 'January', number: 0},
+      {text: 'February', number: 1},
+      {text: 'March', number: 2},
+      {text: 'May', number: 3},
+      {text: 'April', number: 4},
+      {text: 'June', number: 5},
+      {text: 'July', number: 6},
+      {text: 'August', number: 7},
+      {text: 'September', number: 8},
+      {text: 'October', number: 9},
+      {text: 'November', number: 10},
+      {text: 'December', number: 11}
+    ];
+
+    //init
+    this._printHtml();
+    this._getDOMElements();
+    this._assignButtonCallback();
+
+
+  } //.constructor
+
+  /**
+  *   Prints HTML for calculator
+  *
+  */
+  _printHtml(){
+    this.html = `
+    <div class='container'>
+    <div class='row'>
+      <div><button  id="${this.id}-calculate-button" class="col-xs-12 btn btn-primary btn-lg " role="button">Tell me my next MathBirthday!</button></div>
+      <div id='${this.id}-alertmessage' class="col-xs-12 alert alert-success hidden top-buffer " role="alert"></div></p>
+    </div><!--End of Buttons and message-->
+    <div class'container'>
+    `;
+    this.DOMElement.innerHTML = this.html;
+  }// ._printHtml
+
+/**
+*   check if the date selected is not in the future.
+*
+*   @param {Date} selectedDate type Date.
+*   @return {boolean}, true if valid date.
+*/
+  _dateValidation(){
+    const today = new Date();
+    if (this.getDate() > today){
+      this.alertMessage.innerHTML = `Please pick a valid date! :)
+        ... I will not tolerate future dates!`;
+      return false;
+    }
+    return true;
+  }
+
+/**
+* Creates DOM Element properties
+*
+*/
+  _getDOMElements(){
+    this.button = document.getElementById(`${this.id}-calculate-button`);
+    this.alertMessage = document.getElementById(`${this.id}-alertmessage`);
+  }// ._getDOMElements
+
+
+/**
+*   Assigns calculate function to button
+*
+*/
+  _assignButtonCallback(){
+    //On click calculates the next mathbirthday.
+    this.button.onclick =  () => {
+      this.alertMessage.classList.remove('hidden');
+      if (this._dateValidation()){
+        const mathbirthday = this._calculateNextMathbirthday();
+        this.alertMessage.innerHTML = `Your # ${mathbirthday.power} MathBirthday is on
+        ${this.months[mathbirthday.mbday.getMonth()].text} ${mathbirthday.mbday.getDate()}, ${mathbirthday.mbday.getFullYear()}!` ;
+      }
+    };
+  }
+
+
+/**
+*   calculates the next math birthday for the specified birth date.
+*   Mathbirthdays happen when people are 10^n days old.
+*
+*
+*   @param {Date} birthdate.
+*   @return {Number} result.power, power of 10th of the next mathbirthday.
+*   @return {Date}  result.mbday, date of the upcoming mathbirthday.
+*/
+  _calculateNextMathbirthday(){
+
+    const today = new Date();
+    //difference in days.
+    const diff = parseInt( ( today - this.getDate() )/( 24*3600*1000 ) );
+    //the lenght of the # of days determines the next MathBirthday.
+    const mbexpn = diff.toString().length;
+    // we get next mathbirthday  by adding 10^(mb_n+1) to the birthday.
+    const nextMBday = new Date();
+    nextMBday.setDate( this.getDate().getDate() + Math.pow(10, mbexpn) );
+
+    //now we return the result in an object.
+    return {
+      power: mbexpn,
+      mbday: nextMBday
+    };
+  }
 
 
 
-
+} //.class MathBirthdayCalculator
 
 
 //****************************************************************************************************/
@@ -343,13 +507,12 @@ document.addEventListener('DOMContentLoaded',() => {
 
   const options = {
     DOMElementID: 'widget',
-    buttonText: 'Test',
     startYear: 1900,
     endYear: 2016
   };
 
   const dateWidget = new DatePickerWidget(options);
-
+  const mbCalculator = new MathBirthdayCalculator('mathbirthday', () => { return dateWidget.getDate(); } );
 
 
 });
